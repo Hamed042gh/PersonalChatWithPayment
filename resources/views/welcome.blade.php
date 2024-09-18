@@ -56,7 +56,7 @@
                     class="text-5xl font-extrabold text-gray-900 dark:text-white mt-32 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
                     Welcome To Personal Chat
                 </h1>
-                <a href="" class="mt-8 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-lg transition-transform transform hover:bg-indigo-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                <a href="{{route('chat')}}" class="mt-8 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-lg transition-transform transform hover:bg-indigo-500 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-300">
                     Start Chat
                 </a>
             </div>
