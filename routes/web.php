@@ -20,4 +20,4 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/chat',[MessageController::class,'index'])->name('chat');
+Route::get('/chat',[MessageController::class,'index'])->middleware('auth')->name('chat');
