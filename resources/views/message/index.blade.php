@@ -6,7 +6,7 @@
 
 <body>
 
-  
-    @livewire('PersonalChat')
+    <livewire:personal-chat />
+
     @livewireScripts
 </body>
