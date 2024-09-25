@@ -5,8 +5,11 @@ namespace App\Livewire;
 use App\Models\User;
 use App\Models\Message;
 use Livewire\Component;
+use App\Events\PersonalChatEvent;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\On;
+use Carbon\Carbon;
+
 
 class PersonalChat extends Component
 {
@@ -14,28 +17,29 @@ class PersonalChat extends Component
     public $users;
     public $messages = [];
     public $newMessage;
+    public $selectedUserId;
     public $selectedUser;
+
+    protected $listeners = ['addMessage', 'refreshMessages'];
 
     public function mount()
     {
-
         $this->user = Auth::user();
-
-        $users = $this->users = User::where('id', '!=', $this->user->id)->get();
+        $this->users = User::where('id', '!=', $this->user->id)->get();
     }
-
 
     public function chooseUser($user_id)
     {
-
-        $selectedUser =  User::findOrfail($user_id);
-
-
-        $this->selectedUser = $selectedUser;
-
-        $this->loadMessages();
+        $this->dispatch('userSelected', $user_id);
     }
 
+    #[On('userSelected')]
+    public function handleUserSelected($selectedUserId)
+    {
+        $this->selectedUserId = $selectedUserId;
+        $this->selectedUser = User::findOrFail($selectedUserId);
+        $this->loadMessages();
+    }
 
     public function loadMessages()
     {
@@ -47,28 +51,43 @@ class PersonalChat extends Component
         }
     }
 
-
-
     public function handleMessageSubmission()
     {
-        $validateData = $this->validate([
-            'newMessage' => 'required|max:200'
-        ]);
+        $this->validateMessage();
 
-        Message::Create([
+        $message = Message::create([
             'content' => $this->newMessage,
             'sender_id' => $this->user->id,
             'receiver_id' => $this->selectedUser->id,
         ]);
 
-        $this->newMessage = '';
+        broadcast(new PersonalChatEvent($this->user->id, $message));
 
+        $this->newMessage = '';
         $this->loadMessages();
     }
 
+    protected function validateMessage()
+    {
+        return $this->validate([
+            'newMessage' => 'required|max:200'
+        ]);
+    }
 
+    public function addMessage($event)
+    {
+        $this->messages[] = [
+            'content' => $event['content'],
+            'sender_id' => $event['sender_id'],
+            'receiver_id' => $event['receiver_id'],
+            'timestamp' => $event['timestamp'],
+        ];
+    }
 
-
+    public function refreshMessages()
+    {
+        $this->loadMessages();
+    }
 
     public function render()
     {

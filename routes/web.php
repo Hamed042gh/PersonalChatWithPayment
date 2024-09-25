@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Broadcast;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
 
@@ -21,3 +23,5 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 Route::get('/chat',[MessageController::class,'index'])->middleware('auth')->name('chat');
+Broadcast::routes(['middleware' => ['web', 'auth']]);
+

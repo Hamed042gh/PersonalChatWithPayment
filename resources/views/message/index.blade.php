@@ -1,21 +1,34 @@
-<head>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<!DOCTYPE html>
+<html lang="en">
 
-    @livewireStyles
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        @vite('resources/css/app.css')
+        @livewireStyles
+    </head>
 
-<body>
-    @auth
-    <div class="p-4 bg-gray-100">
-        <a href="{{ route('dashboard') }}" class="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
-            Home
-        </a>
+    <body class="bg-gray-100">
 
-    </div>
-    @endauth
+        <script>
+            window.userId = {{ auth()->user()->id }};
+        </script>
 
+        @auth
+            <div class="p-4">
+                <a href="{{ route('dashboard') }}"
+                    class="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded">
+                    Home
+                </a>
+            </div>
+        @endauth
 
-    <livewire:personal-chat />
+        <livewire:personal-chat />
 
-    @livewireScripts
-</body>
+        @vite('resources/js/app.js')
+        @livewireScripts
+    </body>
+
+</html>
