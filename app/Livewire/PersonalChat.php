@@ -5,11 +5,10 @@ namespace App\Livewire;
 use App\Models\User;
 use App\Models\Message;
 use Livewire\Component;
-use App\Events\PersonalChatEvent;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
-use Carbon\Carbon;
-
+use App\Events\PersonalChatEvent;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class PersonalChat extends Component
 {
@@ -20,12 +19,15 @@ class PersonalChat extends Component
     public $selectedUserId;
     public $selectedUser;
 
-    protected $listeners = ['addMessage', 'refreshMessages'];
-
     public function mount()
     {
         $this->user = Auth::user();
         $this->users = User::where('id', '!=', $this->user->id)->get();
+
+        if ($this->user) {
+            $this->user->is_online = true;
+            $this->user->save();
+        }
     }
 
     public function chooseUser($user_id)
@@ -39,6 +41,12 @@ class PersonalChat extends Component
         $this->selectedUserId = $selectedUserId;
         $this->selectedUser = User::findOrFail($selectedUserId);
         $this->loadMessages();
+    }
+
+    #[On('addMessage')]
+    public function addMessage($message)
+    {
+        $this->messages[] = $message;
     }
 
     public function loadMessages()
@@ -58,15 +66,20 @@ class PersonalChat extends Component
         $message = Message::create([
             'content' => $this->newMessage,
             'sender_id' => $this->user->id,
-            'receiver_id' => $this->selectedUser->id,
+            'receiver_id' => $this->selectedUser->id
         ]);
 
-        broadcast(new PersonalChatEvent($this->user->id, $message));
+        // Broadcast the message and user status
+        broadcast(new PersonalChatEvent($this->user->id, $message)); 
+        Log::info('Message broadcasted', ['message' => $message]);
 
+        $this->messages[] = $message;
         $this->newMessage = '';
+        $this->dispatch('addMessage', $message->toArray());
         $this->loadMessages();
     }
 
+    // Validate the message input
     protected function validateMessage()
     {
         return $this->validate([
@@ -74,23 +87,12 @@ class PersonalChat extends Component
         ]);
     }
 
-    public function addMessage($event)
-    {
-        $this->messages[] = [
-            'content' => $event['content'],
-            'sender_id' => $event['sender_id'],
-            'receiver_id' => $event['receiver_id'],
-            'timestamp' => $event['timestamp'],
-        ];
-    }
-
-    public function refreshMessages()
-    {
-        $this->loadMessages();
-    }
-
+    // Render the component
     public function render()
     {
-        return view('livewire.personal-chat');
+        return view('livewire.personal-chat', [
+            'messages' => $this->messages,
+            'users' => $this->users,
+        ]);
     }
 }
