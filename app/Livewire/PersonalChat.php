@@ -18,22 +18,21 @@ class PersonalChat extends Component
     public $newMessage;
     public $selectedUserId;
     public $selectedUser;
+    protected $listeners = ['new' => 'loadMessages'];
+
 
     public function mount()
     {
         $this->user = Auth::user();
         $this->users = User::where('id', '!=', $this->user->id)->get();
-
-        if ($this->user) {
-            $this->user->is_online = true;
-            $this->user->save();
-        }
     }
+
 
     public function chooseUser($user_id)
     {
         $this->dispatch('userSelected', $user_id);
     }
+
 
     #[On('userSelected')]
     public function handleUserSelected($selectedUserId)
@@ -43,20 +42,23 @@ class PersonalChat extends Component
         $this->loadMessages();
     }
 
-    #[On('addMessage')]
-    public function addMessage($message)
-    {
-        $this->messages[] = $message;
-    }
 
     public function loadMessages()
     {
         if ($this->selectedUser) {
             $this->messages = Message::where(function ($query) {
-                $query->whereIn('sender_id', [$this->user->id, $this->selectedUser->id])
-                    ->whereIn('receiver_id', [$this->user->id, $this->selectedUser->id]);
+                $query->where(function ($query) {
+                    $query->where('sender_id', $this->user->id)
+                        ->where('receiver_id', $this->selectedUser->id);
+                })
+                    ->orWhere(function ($query) {
+                        $query->where('sender_id', $this->selectedUser->id)
+                            ->where('receiver_id', $this->user->id);
+                    });
             })->latest()->get()->toArray();
         }
+
+        Log::info('Loaded messages', ['messages' => $this->messages]);
     }
 
     public function handleMessageSubmission()
@@ -69,17 +71,15 @@ class PersonalChat extends Component
             'receiver_id' => $this->selectedUser->id
         ]);
 
-        // Broadcast the message and user status
-        broadcast(new PersonalChatEvent($this->user->id, $message)); 
-        Log::info('Message broadcasted', ['message' => $message]);
 
-        $this->messages[] = $message;
+        broadcast(new PersonalChatEvent($this->user->id, $message));
+        Log::info('Message broadcasted', ['message' => $message]);
+        $this->messages[] = $message->toArray();
         $this->newMessage = '';
-        $this->dispatch('addMessage', $message->toArray());
         $this->loadMessages();
     }
 
-    // Validate the message input
+
     protected function validateMessage()
     {
         return $this->validate([
@@ -87,12 +87,12 @@ class PersonalChat extends Component
         ]);
     }
 
-    // Render the component
+
     public function render()
     {
+
         return view('livewire.personal-chat', [
-            'messages' => $this->messages,
-            'users' => $this->users,
+            'messages' => $this->messages
         ]);
     }
 }

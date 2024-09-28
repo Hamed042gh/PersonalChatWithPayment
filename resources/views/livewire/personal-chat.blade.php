@@ -12,10 +12,10 @@
                     <!-- User Item -->
                     <a wire:click="chooseUser({{ $user->id }})"
                         class="flex items-center mb-4 p-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                        <div class="relative w-12 h-12 bg-gray-300 rounded-full mr-3">
+                        {{-- <div class="relative w-12 h-12 bg-gray-300 rounded-full mr-3">
                             <span class="absolute bottom-0 right-0 block w-3 h-3 {{ $user->is_online ? 'bg-green-500' : 'bg-gray-300' }} border-2 border-white rounded-full"></span>
                             <img src="https://placehold.co/200x/ffa8e4/ffffff.svg?text=ʕ•́ᴥ•̀ʔ&font=Lato" alt="User Avatar" class="w-12 h-12 rounded-full">
-                        </div>
+                        </div> --}}
                         
                         <div class="flex-1">
                             <h2 class="text-lg font-semibold">{{ $user->name }}</h2>
