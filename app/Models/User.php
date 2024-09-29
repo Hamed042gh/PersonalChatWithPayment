@@ -53,7 +53,7 @@ class User extends Authenticatable
     {
         return $this->last_activity && Carbon::parse($this->last_activity)->diffInMinutes(now()) < 5;
     }
-    
+
 
 
     public function sentMessages()

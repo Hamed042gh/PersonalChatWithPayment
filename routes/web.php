@@ -20,11 +20,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 Route::get('/chat', [MessageController::class, 'index'])
     ->middleware(['auth', 'update.last.activity'])
     ->name('chat');
 
 Broadcast::routes(['middleware' => ['web', 'auth']]);
-

@@ -7,6 +7,7 @@ use App\Models\Message;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use App\Events\PersonalChatEvent;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class PersonalChat extends Component
@@ -26,10 +27,6 @@ class PersonalChat extends Component
 
         $this->users = User::where('id', '!=', $this->user->id)->get();
     }
-
-
-
-
 
     public function chooseUser($user_id)
     {
@@ -66,18 +63,42 @@ class PersonalChat extends Component
     {
         $this->validateMessage();
 
-        $message = Message::create([
+        try {
+            $message = $this->createMessage();
+            $this->broadcastMessage($message);
+            $this->loadMessages();
+        } catch (\Exception $e) {
+            $this->handleError($e);
+        } finally {
+            $this->resetNewMessage();
+        }
+    }
+
+    private function createMessage()
+    {
+        return Message::create([
             'content' => $this->newMessage,
             'sender_id' => $this->user->id,
             'receiver_id' => $this->selectedUser->id
         ]);
-
-
-        broadcast(new PersonalChatEvent($this->user->id, $message));
-        $this->messages[] = $message->toArray();
-        $this->newMessage = '';
-        $this->loadMessages();
     }
+
+    private function broadcastMessage($message)
+    {
+        broadcast(new PersonalChatEvent($this->user->id, $message));
+    }
+
+    private function handleError($exception)
+    {
+        Log::error('Error handling message submission: ' . $exception->getMessage());
+        session()->flash('error', 'There was a problem sending your message.');
+    }
+
+    private function resetNewMessage()
+    {
+        $this->newMessage = '';
+    }
+
 
 
     protected function validateMessage()

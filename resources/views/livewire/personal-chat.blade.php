@@ -9,21 +9,23 @@
             <!-- User List -->
             <div class="overflow-y-auto h-screen p-3" wire:poll.5s>
                 @foreach ($users as $user)
-                  
-                        <!-- User Item -->
-                        <a wire:click="chooseUser({{ $user->id }})"
-                            class="flex items-center mb-4 p-2 rounded-md hover:bg-gray-100 cursor-pointer">
-                            <div class="relative w-12 h-12 bg-gray-300 rounded-full mr-3">
-                                <span
-                                    class="absolute bottom-0 right-0 block w-5 h-5 {{ $user->isOnline() ? 'bg-green-500' : 'bg-gray-300' }} border-4 border-white rounded-full"></span>
-                               
-                            </div>
+                    <!-- User Item -->
+                    <a wire:click="chooseUser({{ $user->id }})"
+                        class="flex items-center mb-4 p-2 rounded-md hover:bg-gray-100 cursor-pointer">
+                        <div class="relative w-12 h-12 bg-gray-300 rounded-full mr-3">
+                            <span
+                                class="absolute bottom-0 right-0 block w-5 h-5 {{ $user->isOnline() ? 'bg-green-500' : 'bg-gray-300' }} border-4 border-white rounded-full"></span>
 
-                            <div class="flex-1">
-                                <h2 class="text-lg font-semibold">{{ $user->name }}</h2>
+                            <div
+                                class="w-8 h-8 {{ $user->isOnline() ? 'bg-green-400 text-white' : 'bg-gray-400 text-gray-800' }} rounded-full flex items-center justify-center">
+                                <span class="font-bold">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
                             </div>
-                        </a>
-                    
+                        </div>
+
+                        <div class="flex-1">
+                            <h2 class="text-lg font-semibold">{{ $user->name }}</h2>
+                        </div>
+                    </a>
                 @endforeach
             </div>
         </div>
