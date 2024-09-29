@@ -7,7 +7,6 @@ use App\Models\Message;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use App\Events\PersonalChatEvent;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class PersonalChat extends Component
@@ -24,8 +23,12 @@ class PersonalChat extends Component
     public function mount()
     {
         $this->user = Auth::user();
+
         $this->users = User::where('id', '!=', $this->user->id)->get();
     }
+
+
+
 
 
     public function chooseUser($user_id)
@@ -57,8 +60,6 @@ class PersonalChat extends Component
                     });
             })->latest()->get()->toArray();
         }
-
-        Log::info('Loaded messages', ['messages' => $this->messages]);
     }
 
     public function handleMessageSubmission()
@@ -73,7 +74,6 @@ class PersonalChat extends Component
 
 
         broadcast(new PersonalChatEvent($this->user->id, $message));
-        Log::info('Message broadcasted', ['message' => $message]);
         $this->messages[] = $message->toArray();
         $this->newMessage = '';
         $this->loadMessages();

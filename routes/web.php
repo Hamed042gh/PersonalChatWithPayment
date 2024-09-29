@@ -22,6 +22,9 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-Route::get('/chat',[MessageController::class,'index'])->middleware('auth')->name('chat');
+Route::get('/chat', [MessageController::class, 'index'])
+    ->middleware(['auth', 'update.last.activity'])
+    ->name('chat');
+
 Broadcast::routes(['middleware' => ['web', 'auth']]);
 

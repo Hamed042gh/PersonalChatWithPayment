@@ -7,14 +7,19 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
         @vite('resources/css/app.css')
-        @livewireStyles
+
+        @if (!Request::routeIs('login', 'register'))
+            <!-- بررسی اینکه صفحه لاگین یا ثبت‌نام نباشد -->
+            @livewireStyles
+        @endif
     </head>
 
     <body class="bg-gray-100">
-
-        <script>
-            window.userId = {{ auth()->user()->id }};
-        </script>
+        @auth
+            <script>
+                window.userId = {{ auth()->user()->id }};
+            </script>
+        @endauth
 
         @auth
             <div class="p-4">
@@ -25,10 +30,15 @@
             </div>
         @endauth
 
-        <livewire:personal-chat />
+        @if (!Request::routeIs('login', 'register'))
+            <livewire:personal-chat />
+        @endif
 
         @vite('resources/js/app.js')
-        @livewireScripts
+        @if (!Request::routeIs('login', 'register'))
+            <!-- بررسی اینکه صفحه لاگین یا ثبت‌نام نباشد -->
+            @livewireScripts
+        @endif
     </body>
 
 </html>

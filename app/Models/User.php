@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\Carbon;
 use App\Models\Message;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,7 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        
+        'last_activity'
+
     ];
 
     /**
@@ -33,7 +35,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-  
+
     /**
      * Get the attributes that should be cast.
      *
@@ -47,11 +49,19 @@ class User extends Authenticatable
         ];
     }
 
+    public function isOnline()
+    {
+        return $this->last_activity && Carbon::parse($this->last_activity)->diffInMinutes(now()) < 5;
+    }
+    
+
 
     public function sentMessages()
     {
         return $this->hasMany(Message::class, 'sender_id');
     }
+
+
 
     public function receivedMessages()
     {
