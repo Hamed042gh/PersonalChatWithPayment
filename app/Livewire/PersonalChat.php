@@ -25,7 +25,11 @@ class PersonalChat extends Component
     {
         $this->user = Auth::user();
 
-        $this->users = User::where('id', '!=', $this->user->id)->get();
+        $this->users = User::where('id', '!=', $this->user->id)
+        ->get()
+        ->sortByDesc(function ($user) {
+            return $user->last_activity && $user->last_activity > now()->subMinutes(5);
+        });
     }
 
     public function chooseUser($user_id)
