@@ -22,7 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'last_activity'
+        'last_activity',
+        'messages_count'
 
     ];
 
@@ -54,7 +55,10 @@ class User extends Authenticatable
         return $this->last_activity && Carbon::parse($this->last_activity)->diffInMinutes(now()) < 5;
     }
 
-
+    public function messages_count()
+    {
+        return $this->sentMessages()->count();
+    }
 
     public function sentMessages()
     {

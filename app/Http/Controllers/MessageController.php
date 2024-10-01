@@ -9,4 +9,5 @@ class MessageController extends Controller
   {
     return view('message.index');
   }
+
 }

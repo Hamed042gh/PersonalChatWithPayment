@@ -9,7 +9,7 @@
         @vite('resources/css/app.css')
 
         @if (!Request::routeIs('login', 'register'))
-            <!-- بررسی اینکه صفحه لاگین یا ثبت‌نام نباشد -->
+          
             @livewireStyles
         @endif
     </head>
@@ -43,7 +43,7 @@
 
         @vite('resources/js/app.js')
         @if (!Request::routeIs('login', 'register'))
-            <!-- بررسی اینکه صفحه لاگین یا ثبت‌نام نباشد -->
+           
             @livewireScripts
         @endif
     </body>

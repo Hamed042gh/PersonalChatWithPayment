@@ -26,10 +26,10 @@ class PersonalChat extends Component
         $this->user = Auth::user();
 
         $this->users = User::where('id', '!=', $this->user->id)
-        ->get()
-        ->sortByDesc(function ($user) {
-            return $user->last_activity && $user->last_activity > now()->subMinutes(5);
-        });
+            ->get()
+            ->sortByDesc(function ($user) {
+                return $user->last_activity && $user->last_activity > now()->subMinutes(5);
+            });
     }
 
     public function chooseUser($user_id)
@@ -80,12 +80,16 @@ class PersonalChat extends Component
 
     private function createMessage()
     {
-        return Message::create([
+        $message  = Message::create([
             'content' => $this->newMessage,
             'sender_id' => $this->user->id,
             'receiver_id' => $this->selectedUser->id
         ]);
+        $this->user->increment('messages_count');
+
+        return $message;
     }
+
 
     private function broadcastMessage($message)
     {
