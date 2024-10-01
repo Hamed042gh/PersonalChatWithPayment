@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Broadcast;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SubscribeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -25,5 +26,6 @@ require __DIR__ . '/auth.php';
 Route::get('/chat', [MessageController::class, 'index'])
     ->middleware(['auth', 'update.last.activity'])
     ->name('chat');
+Route::get('/subscribe', [SubscribeController::class, 'index']);
 
 Broadcast::routes(['middleware' => ['web', 'auth']]);
