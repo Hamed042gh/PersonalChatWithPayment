@@ -60,12 +60,14 @@ class PersonalChat extends Component
                             ->where('receiver_id', $this->user->id);
                     });
             })->latest()->get()->toArray();
+            $this->user->refresh();
         }
     }
 
     public function handleMessageSubmission()
     {
         $this->validateMessage();
+        $this->checkMessageLimit();
 
         try {
             $message = $this->createMessage();
@@ -75,6 +77,16 @@ class PersonalChat extends Component
             $this->handleError($e);
         } finally {
             $this->resetNewMessage();
+        }
+    }
+
+    private function checkMessageLimit()
+    {
+        if ($this->user->messages_count > 2) {
+
+            session()->flash('message', 'You have reached your message limit. Please subscribe to continue messaging.');
+            $this->resetNewMessage();
+            return redirect()->to('/subscribe');
         }
     }
 

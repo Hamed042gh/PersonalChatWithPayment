@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
 require __DIR__ . '/auth.php';
 
 Route::get('/chat', [MessageController::class, 'index'])
-    ->middleware(['auth', 'update.last.activity'])
+    ->middleware(['auth', 'update.last.activity', 'check.user.limit'])
     ->name('chat');
 Route::get('/subscribe', [SubscribeController::class, 'index']);
 
