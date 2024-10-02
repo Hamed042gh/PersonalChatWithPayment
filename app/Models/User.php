@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Carbon\Carbon;
+use App\Models\invoice;
 use App\Models\Message;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -70,5 +71,9 @@ class User extends Authenticatable
     public function receivedMessages()
     {
         return $this->hasMany(Message::class, 'receiver_id');
+    }
+    public function invoices()
+    {
+        return $this->hasMany(invoice::class);
     }
 }

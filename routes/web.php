@@ -23,9 +23,14 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__ . '/auth.php';
 
+Route::middleware(['auth', 'check.user.limit'])->group(function () {
+    Route::get('/subscribe', [SubscribeController::class, 'index']);
+   
+});
+Route::get('/purchase', [SubscribeController::class, 'purchase']);
+// مسیر خاص با سه میدل‌ور
 Route::get('/chat', [MessageController::class, 'index'])
     ->middleware(['auth', 'update.last.activity', 'check.user.limit'])
     ->name('chat');
-Route::get('/subscribe', [SubscribeController::class, 'index']);
 
 Broadcast::routes(['middleware' => ['web', 'auth']]);
