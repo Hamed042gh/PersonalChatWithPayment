@@ -24,22 +24,17 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__ . '/auth.php';
 
-
 Route::get('/subscribe', [SubscribeController::class, 'index']);
-
 Route::get('/purchase', [SubscribeController::class, 'purchase']);
-// مسیر خاص با سه میدل‌ور
+
+
 Route::get('/chat', [MessageController::class, 'index'])
     ->middleware(['auth', 'update.last.activity', 'check.user.limit'])
     ->name('chat');
 
 Broadcast::routes(['middleware' => ['web', 'auth']]);
 
-
-
-
-Route::middleware(['auth'])->group(function () {
-
+Route::middleware(['auth', 'check.payment.limit'])->group(function () {
     Route::post('/payment/request', [PaymentController::class, 'requestPayment']);
     Route::get('/payment/callback', [PaymentController::class, 'verifyPayment']);
     Route::post('/payment/verify', [PaymentController::class, 'verifyPayment']);

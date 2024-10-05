@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Application;
 use App\Http\Middleware\UserMessagesLimit;
+use App\Http\Middleware\UsersPaymentLimit;
 use App\Http\Middleware\UpdateLastActivity;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'update.last.activity' => UpdateLastActivity::class,
             'check.user.limit' => UserMessagesLimit::class,
+            'check.payment.limit' => UsersPaymentLimit::class,
 
         ]);
         $middleware->validateCsrfTokens(except: [
