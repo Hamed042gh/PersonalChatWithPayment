@@ -82,7 +82,7 @@ class PersonalChat extends Component
 
     private function checkMessageLimit()
     {
-        if ($this->user->messages_count > 2) {
+        if ($this->user->messages_count >= 3) {
 
             session()->flash('message', 'You have reached your message limit. Please subscribe to continue messaging.');
             $this->resetNewMessage();

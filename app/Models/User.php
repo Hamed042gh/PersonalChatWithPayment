@@ -6,6 +6,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use App\Models\invoice;
 use App\Models\Message;
+use App\Models\Payment;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -72,8 +73,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class, 'receiver_id');
     }
-    public function invoices()
+
+
+    public function payment()
     {
-        return $this->hasMany(invoice::class);
+        return $this->hasOne(Payment::class);
     }
 }

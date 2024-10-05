@@ -16,8 +16,9 @@ class SubscribeController extends Controller
     public function purchase()
     {
         $user = Auth::user();
-        $orderNumber = Str::uuid();
+        $orderId = Str::uuid();
+        session(['order_id' => $orderId]);
 
-        return view('subscribe.purchase', compact('user', 'orderNumber'));
+        return view('subscribe.purchase', compact('user', 'orderId'));
     }
 }

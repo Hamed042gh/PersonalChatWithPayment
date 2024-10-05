@@ -1,34 +1,35 @@
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
-<div class="bg-white shadow-md rounded-lg p-6 max-w-lg mx-auto mt-10 mb-10">
-    <div class="text-center mb-4">
-        <span class="text-gray-500 text-sm" id="orderno">Order #{{ $orderNumber }}</span>
-    </div>
-    <div class="text-center text-2xl font-semibold mb-6 text-gray-800">Thank you for your order, {{ $user->name }}!</div>
-    
-    <div class="mb-6">
-        <p class="text-lg font-bold text-gray-700 text-center">Payment Summary</p>
-        <p class="text-gray-700 mb-6">With an annual payment of $2, you can enjoy unlimited chatting services.</p>
+<form action="/payment/request" method="POST" class="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-md">
+    @csrf
+
+    <div class="text-center mb-6">
+        <img src="{{ asset('images/chat7403.png') }}" alt="Shaparak Logo" class="mx-auto w-32 h-auto">
     </div>
 
-    <div class="space-y-4">
-        <div class="flex justify-between text-gray-700">
-            <span><b>Unlimited chat for one year</b></span>
-        </div>
+    <input type="hidden" name="amount" id="amount" value="1000">
+    <input type="hidden" name="order_id" id="order_id" value="{{ $orderId }}">
+    <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
+
+    <div class="mb-4">
+        <p class="text-lg font-semibold text-gray-700"><strong>Amount:</strong> 1000 Toman</p>
+        <p class="text-lg font-semibold text-gray-700"><strong>Order ID:<br></strong> {{ $orderId }}</p>
+        <p class="text-lg font-semibold text-gray-700"><strong>Payer Identity:</strong> {{ auth()->user()->email }}</p>
+        <p class="text-lg font-semibold text-gray-700"><strong>Payer Name:</strong> {{ auth()->user()->name }}</p>
+        <p class="text-lg font-semibold text-gray-700"><strong>Description:</strong> Payment for online purchase</p>
     </div>
 
-    <hr class="my-4 border-gray-300">
+    <input type="hidden" name="payerIdentity" value="{{ auth()->user()->email }}">
+    <input type="hidden" name="payerName" value="{{ auth()->user()->name }}">
+    <input type="hidden" name="description" value="Payment for online purchase">
 
-    <div class="total mb-6">
-        <div class="flex justify-between text-lg font-semibold text-gray-800">
-            <span>Total:</span>
-            <span>$2</span>
-        </div>
-    </div>
+    <button type="submit"
+        class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200">
+        Proceed to Payment
+    </button>
 
-    <div class="text-center">
-        <a href="" class="bg-blue-500 text-white font-semibold py-3 px-6 rounded-full shadow-md hover:bg-blue-600 transition duration-300">
-            Purchase
-        </a>
+    <div class="mt-6 flex justify-center items-center space-x-4">
+        <script src="https://zibal.ir/trust/scripts/1.js" type="text/javascript"></script>
+        <img src="{{ asset('images/shaparak.png') }}" alt="Shaparak Logo" class="w-16 h-auto">
     </div>
-</div>
+</form>

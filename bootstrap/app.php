@@ -16,8 +16,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'update.last.activity' => UpdateLastActivity::class,
-            'check.user.limit' => UserMessagesLimit::class
+            'check.user.limit' => UserMessagesLimit::class,
 
+        ]);
+        $middleware->validateCsrfTokens(except: [
+            'stripe/*',
+            'http://localhost/payment/verify',
+            
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -18,7 +18,7 @@ class UserMessagesLimit
     {
         $user = Auth::user();
         if ($user->messages_count > 2) {
-            return redirect('/subscribe')->with('message', 'You have reached your message limit. Please subscribe to continue messaging.');
+            return redirect('/purchase')->with('message', 'You have reached your message limit. Please subscribe to continue messaging.');
         }
         return $next($request);
     }

@@ -2,20 +2,21 @@
 
 namespace App\Models;
 
-use App\Models\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class invoice extends Model
+class Payment extends Model
 {
     use HasFactory;
     protected $fillable =
     [
         'amount',
-        'order_number',
-        'description',
         'user_id',
-        'status'
+        'status',
+        'payer_name',
+        'payer_identity',
+        'order_id',
+        'track_id'
     ];
     public function user()
     {
