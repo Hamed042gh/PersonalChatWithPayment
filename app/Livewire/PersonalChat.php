@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\User;
 use App\Models\Message;
 use Livewire\Component;
+
 use Livewire\Attributes\On;
 use App\Events\PersonalChatEvent;
 use Illuminate\Support\Facades\Log;
@@ -34,6 +35,7 @@ class PersonalChat extends Component
 
     public function chooseUser($user_id)
     {
+        $this->selectedUser = User::find($user_id);
         $this->dispatch('userSelected', $user_id);
     }
 
@@ -90,7 +92,7 @@ class PersonalChat extends Component
         }
     }
 
-    private function createMessage()
+    protected function createMessage()
     {
         $message  = Message::create([
             'content' => $this->newMessage,
@@ -108,7 +110,7 @@ class PersonalChat extends Component
         broadcast(new PersonalChatEvent($this->user->id, $message));
     }
 
-    private function handleError($exception)
+    protected function handleError($exception)
     {
         Log::error('Error handling message submission: ' . $exception->getMessage());
         session()->flash('error', 'There was a problem sending your message.');
