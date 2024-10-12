@@ -173,8 +173,8 @@ class PersonalChatTest extends TestCase
     {
         $user1 = User::factory()->create(['messages_count' => 0]);
         $user2 = User::factory()->create(['messages_count' => 0]);
-
         $this->actingAs($user1);
+       
 
         $component = Livewire::test(PersonalChat::class)
             ->call('chooseUser', $user2->id);

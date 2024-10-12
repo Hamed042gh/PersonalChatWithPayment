@@ -38,14 +38,15 @@ class PaymentRequestStore extends FormRequest
     public function messages()
     {
         return [
-            'amount.required' => 'مبلغ باید وارد شود.',
-            'amount.in' => 'مبلغ باید 1000 تومان باشد.',
-            'order_id.required' => 'شناسه سفارش باید وارد شود.',
-            'user_id.required' => 'شناسه کاربر لازم است.',
-            'payerIdentity.required' => 'ایمیل پرداخت‌کننده لازم است.',
-            'payerIdentity.email' => 'فرمت ایمیل پرداخت‌کننده باید معتبر باشد.',
-            'payerName.required' => 'نام پرداخت‌کننده باید وارد شود.',
-            'description.required' => 'توضیحات پرداخت باید وارد شود.',
+            'amount.required' => 'The amount is required.',
+            'amount.in' => 'The amount must be 1000 Toman.',
+            'order_id.required' => 'The order ID is required.',
+            'user_id.required' => 'The user ID is required.',
+            'payerIdentity.required' => 'The payer email is required.',
+            'payerIdentity.email' => 'The payer email format must be valid.',
+            'payerName.required' => 'The payer name is required.',
+            'description.required' => 'The payment description is required.',
         ];
     }
+    
 }

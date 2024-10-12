@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Payment;
 use App\Enums\PaymentStatus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Http\Requests\PaymentRequestStore;
@@ -17,7 +18,6 @@ class PaymentController extends Controller
 
     public function requestPayment(PaymentRequestStore $request)
     {
-        $trackId = uniqid();
         $zibalResponse = $this->sendRequestToZibal($request);
 
         if (isset($zibalResponse['trackId'])) {
@@ -34,14 +34,16 @@ class PaymentController extends Controller
         return Http::post(self::ZIBAL_API_REQUEST, [
             'merchant' => 'zibal',
             'amount' => 1000,
-            'order_id' => $request->input('order_id'),
-            'payerName' => $request->input('payerName'),
+            'orderId' => $request->input('order_id'),
             'callbackUrl' => self::CALLBACK_URL,
+            'description' => 'Order payment',
         ])->json();
     }
 
+
     private function storePayment(PaymentRequestStore $request, string $trackId)
     {
+
         Payment::create([
             'order_id' => $request->input('order_id'),
             'track_id' => $trackId,
@@ -53,45 +55,57 @@ class PaymentController extends Controller
         ]);
     }
 
+
     public function verifyPayment(Request $request)
     {
-        $trackId = $request->query('trackId');
-        $success = $request->query('success');
-        $status = $request->query('status');
+        $trackId = $request->input('trackId');
+        $success = $request->input('success');
+        $status = $request->input('status');
         $orderId = session('order_id');
 
         if ($success == '1') {
-            $inquiryResponse = $this->inquiryPayment($trackId);
+            $verifyResponse = $this->verifyPaymentWithZibal($trackId);
 
-            if ($inquiryResponse['result'] == 100) {
+            if ($verifyResponse['result'] == 100) {
+                $status = $verifyResponse['status'];
                 return $this->handleSuccessfulPayment($trackId, $status, $orderId);
             }
 
-            return redirect('/dashboard')->withErrors(['payment' => 'Payment confirmed but inquiry failed.']);
+            return redirect('/dashboard')->withErrors(['payment' => 'Payment confirmed but verification failed.']);
         }
 
         return redirect('/dashboard')->withErrors(['payment' => 'Payment failed.']);
     }
 
-    private function handleSuccessfulPayment($trackId, $status, $orderId)
+    protected function verifyPaymentWithZibal($trackId)
     {
-        $payment = Payment::where('track_id', $trackId)->first();
-        $payment->status = $status;
-        $payment->save();
-
-        return $this->handlePaymentStatus($status, $orderId);
-    }
-
-    private function inquiryPayment($trackId)
-    {
-        return Http::post(self::ZIBAL_API_INQUIRY, [
+        $response = Http::post('https://gateway.zibal.ir/v1/verify', [
             'merchant' => 'zibal',
             'trackId' => $trackId,
         ])->json();
+        Log::info($response);
+        return $response;
     }
 
-    private function handlePaymentStatus(int $status, string $orderId)
+
+    protected function handleSuccessfulPayment($trackId, $status, $orderId)
     {
+
+        $payment = Payment::where('track_id', $trackId)->first();
+       
+        if ($payment) {
+            $payment->status = $status;
+           
+            $payment->save();
+        }
+      
+        return $this->handlePaymentStatus($status, $orderId);
+    }
+
+
+    protected function handlePaymentStatus(int $status, string $orderId)
+    {
+        
         switch (PaymentStatus::from($status)) {
             case PaymentStatus::SUCCESS_CONFIRMED:
                 return redirect('/dashboard')->with('message', 'Payment successful and confirmed. Order ID: ' . $orderId);
