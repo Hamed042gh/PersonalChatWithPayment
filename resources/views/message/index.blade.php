@@ -32,13 +32,14 @@
                     class="text-white bg-gradient-to-r from-purple-400 to-indigo-500 hover:from-purple-500 hover:to-indigo-600 font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300 ease-in-out border-b-4 border-transparent hover:border-indigo-600">
                     Home
                 </a>
+                @if (Auth::user()->unlimited_message == false)
+                    <a href="/subscribe"
+                        class="text-white bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300 ease-in-out border-b-4 border-transparent hover:border-blue-600">
+                        Subscribe
+                    </a>
+                @endif
 
-                <a href="/subscribe"
-                    class="text-white bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300 ease-in-out border-b-4 border-transparent hover:border-blue-600">
-                    Subscribe
-                </a>
             </div>
-        
 
         @endauth
 

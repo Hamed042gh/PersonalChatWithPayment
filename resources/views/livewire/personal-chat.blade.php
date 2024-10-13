@@ -2,11 +2,12 @@
     @php
         use Carbon\Carbon;
     @endphp
-    <div class="w-full bg-gray-200 rounded-full h-2.5">
-        <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ ($user->messages_count / 10) * 100 }}%"></div>
-    </div>
-    <span class="text-sm text-gray-500">You have sent {{ Auth::user()->messages_count }} messages</span>
-    
+    @if ($user->unlimited_message == false)
+        <span class="text-sm {{ $user->messages_count > 2 ? 'text-red-500' : 'text-gray-500' }}">
+            You have sent {{ Auth::user()->messages_count }} messages
+        </span>
+    @endif
+
     <div class="flex h-screen">
         <!-- Sidebar (User List) -->
         <div class="w-1/4 bg-white border-r border-gray-300">
@@ -14,7 +15,6 @@
             <div class="overflow-y-auto h-screen p-3" wire:poll.5s>
 
                 @foreach ($users as $user)
-            
                     <!-- User Item -->
                     <a wire:click="chooseUser({{ $user->id }})"
                         class="flex items-center mb-4 p-2 rounded-md hover:bg-gray-100 cursor-pointer">

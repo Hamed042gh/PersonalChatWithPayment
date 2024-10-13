@@ -33,7 +33,7 @@
             Start Chat
         </a>
 
-        @if (Auth::user()->messages_count >= 3)
+        @if (Auth::user()->messages_count >= 2 && Auth::user()->unlimited_message == false)
             <a href="/subscribe"
                 class="text-white bg-green-500 hover:bg-green-700 font-bold py-2 px-4 rounded transition duration-300 ease-in-out shadow-md">
                 Subscribe

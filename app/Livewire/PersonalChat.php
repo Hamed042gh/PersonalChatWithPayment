@@ -69,27 +69,32 @@ class PersonalChat extends Component
     public function handleMessageSubmission()
     {
         $this->validateMessage();
-        $this->checkMessageLimit();
+        if ($this->checkMessageLimit()) {
 
-        try {
-            $message = $this->createMessage();
-            $this->broadcastMessage($message);
-            $this->loadMessages();
-        } catch (\Exception $e) {
-            $this->handleError($e);
-        } finally {
-            $this->resetNewMessage();
+
+
+            try {
+                $message = $this->createMessage();
+                $this->broadcastMessage($message);
+                $this->loadMessages();
+            } catch (\Exception $e) {
+                $this->handleError($e);
+            } finally {
+                $this->resetNewMessage();
+            }
         }
     }
 
     private function checkMessageLimit()
     {
-        if ($this->user->messages_count >= 3) {
+        if ($this->user->messages_count >= 3 && $this->user->unlimited_message == false) {
 
             session()->flash('message', 'You have reached your message limit. Please subscribe to continue messaging.');
             $this->resetNewMessage();
-            return redirect()->to('/subscribe');
+            redirect()->to('/subscribe');
+            return false;
         }
+        return true;
     }
 
     protected function createMessage()
@@ -112,7 +117,7 @@ class PersonalChat extends Component
 
     protected function handleError($exception)
     {
-        Log::error('Error handling message submission: ' . $exception->getMessage());
+
         session()->flash('error', 'There was a problem sending your message.');
     }
 

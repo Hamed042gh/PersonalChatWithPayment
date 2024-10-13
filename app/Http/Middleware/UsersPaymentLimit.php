@@ -19,7 +19,7 @@ class UsersPaymentLimit
     {
         $user = Auth::user();
         $payment = Payment::where('user_id', $user->id)->first();
-        if ($payment  &&  $payment->status == 2) {
+        if ($payment  &&  $payment->status == 1) {
             return redirect('/dashboard')->withErrors(['message' => 'You already made a payment.']);
         }
         return $next($request);

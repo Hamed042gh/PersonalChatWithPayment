@@ -17,7 +17,7 @@ class UserMessagesLimit
     public function handle(Request $request, Closure $next): Response
     {
         $user = Auth::user();
-        if ($user->messages_count > 2) {
+        if ($user->messages_count >= 3 && $user->unlimited_message == false) {
             return redirect('/purchase')->with('message', 'You have reached your message limit. Please subscribe to continue messaging.');
         }
         return $next($request);
