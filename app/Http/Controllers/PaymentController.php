@@ -95,7 +95,7 @@ class PaymentController extends Controller
        
         if ($payment) {
             $payment->status = $status;
-           
+            $payment->save();
             $user = $payment->user; 
             $user->unlimited_message = true;
             $user->save();
