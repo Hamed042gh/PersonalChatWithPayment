@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Application;
+use App\Http\Middleware\PaymentThrottle;
 use App\Http\Middleware\DailyChatThrottle;
 use App\Http\Middleware\UserMessagesLimit;
 use App\Http\Middleware\UsersPaymentLimit;
@@ -20,13 +21,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'update.last.activity' => UpdateLastActivity::class,
             'check.user.limit' => UserMessagesLimit::class,
             'check.payment.limit' => UsersPaymentLimit::class,
-            'daily.chat.throttle' =>DailyChatThrottle::class
+            'daily.chat.throttle' => DailyChatThrottle::class,
+            'daily.payment.throttle' => PaymentThrottle::class
 
         ]);
         $middleware->validateCsrfTokens(except: [
             'stripe/*',
             'http://localhost/payment/verify',
-            
+
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

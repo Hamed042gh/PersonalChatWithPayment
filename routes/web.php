@@ -34,7 +34,7 @@ Route::get('/chat', [MessageController::class, 'index'])
 
 Broadcast::routes(['middleware' => ['web', 'auth']]);
 
-Route::middleware(['auth', 'check.payment.limit'])->group(function () {
+Route::middleware(['auth', 'check.payment.limit','daily.payment.throttle'])->group(function () {
     Route::post('/payment/request', [PaymentController::class, 'requestPayment']);
     Route::get('/payment/callback', [PaymentController::class, 'verifyPayment']);
     Route::post('/payment/verify', [PaymentController::class, 'verifyPayment']);
