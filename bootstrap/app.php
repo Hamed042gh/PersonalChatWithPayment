@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Application;
+use App\Http\Middleware\DailyChatThrottle;
 use App\Http\Middleware\UserMessagesLimit;
 use App\Http\Middleware\UsersPaymentLimit;
 use App\Http\Middleware\UpdateLastActivity;
@@ -19,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'update.last.activity' => UpdateLastActivity::class,
             'check.user.limit' => UserMessagesLimit::class,
             'check.payment.limit' => UsersPaymentLimit::class,
+            'daily.chat.throttle' =>DailyChatThrottle::class
 
         ]);
         $middleware->validateCsrfTokens(except: [

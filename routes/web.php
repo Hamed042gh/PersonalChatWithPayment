@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/chat', [MessageController::class, 'index'])
-    ->middleware(['auth', 'update.last.activity', 'check.user.limit'])
+    ->middleware(['auth', 'update.last.activity', 'check.user.limit','daily.chat.throttle'])
     ->name('chat');
 
 Broadcast::routes(['middleware' => ['web', 'auth']]);
