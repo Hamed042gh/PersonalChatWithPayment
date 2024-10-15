@@ -13,7 +13,7 @@ use App\Http\Requests\PaymentRequestStore;
 class PaymentController extends Controller
 {
     private const ZIBAL_API_REQUEST = 'https://gateway.zibal.ir/v1/request';
-    private const ZIBAL_API_INQUIRY = 'https://gateway.zibal.ir/v1/inquiry';
+    // private const ZIBAL_API_INQUIRY = 'https://gateway.zibal.ir/v1/inquiry';
     private const CALLBACK_URL = 'http://localhost/payment/callback';
 
     public function requestPayment(PaymentRequestStore $request)
@@ -70,11 +70,9 @@ class PaymentController extends Controller
                 $status = $verifyResponse['status'];
                 return $this->handleSuccessfulPayment($trackId, $status, $orderId);
             }
-
-            return redirect('/dashboard')->withErrors(['payment' => 'Payment confirmed but verification failed.']);
         }
 
-        return redirect('/dashboard')->withErrors(['payment' => 'Payment failed.']);
+        return $this->handleFailedPayment($trackId, $status, $orderId);
     }
 
     protected function verifyPaymentWithZibal($trackId)
@@ -83,7 +81,6 @@ class PaymentController extends Controller
             'merchant' => 'zibal',
             'trackId' => $trackId,
         ])->json();
-        Log::info($response);
         return $response;
     }
 
@@ -92,22 +89,36 @@ class PaymentController extends Controller
     {
 
         $payment = Payment::where('track_id', $trackId)->first();
-       
+
         if ($payment) {
             $payment->status = $status;
             $payment->save();
-            $user = $payment->user; 
-            $user->unlimited_message = true;
+            $user = $payment->user;
+            $user->unlimited_message = $status === PaymentStatus::SUCCESS_CONFIRMED->value;
             $user->save();
         }
-      
+
         return $this->handlePaymentStatus($status, $orderId);
+    }
+
+    protected function handleFailedPayment($trackId, $status, $orderId)
+    {
+
+        $payment = Payment::where('track_id', $trackId)->first();
+
+
+        if ($payment) {
+            $payment->status = PaymentStatus::INTERNAL_ERROR->value;
+            $payment->save();
+        }
+
+        return redirect('/dashboard')->withErrors(['payment' => 'Payment failed. Please try again later.']);
     }
 
 
     protected function handlePaymentStatus(int $status, string $orderId)
     {
-        
+
         switch (PaymentStatus::from($status)) {
             case PaymentStatus::SUCCESS_CONFIRMED:
                 return redirect('/dashboard')->with('message', 'Payment successful and confirmed. Order ID: ' . $orderId);

@@ -5,10 +5,8 @@ namespace App\Livewire;
 use App\Models\User;
 use App\Models\Message;
 use Livewire\Component;
-
 use Livewire\Attributes\On;
 use App\Events\PersonalChatEvent;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class PersonalChat extends Component
@@ -70,8 +68,6 @@ class PersonalChat extends Component
     {
         $this->validateMessage();
         if ($this->checkMessageLimit()) {
-
-
 
             try {
                 $message = $this->createMessage();

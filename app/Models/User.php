@@ -25,7 +25,8 @@ class User extends Authenticatable
         'email',
         'password',
         'last_activity',
-        'messages_count'
+        'messages_count',
+        'unlimited_message'
 
     ];
 

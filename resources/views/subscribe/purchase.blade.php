@@ -12,7 +12,7 @@
     <input type="hidden" name="user_id" id="user_id" value="{{ auth()->user()->id }}">
 
     <div class="mb-4">
-        <p class="text-lg font-semibold text-gray-700"><strong>Amount:</strong> 1000 Toman</p>
+        <p class="text-lg font-semibold text-gray-700"><strong>Amount:</strong> 1000 Rial</p>
         <p class="text-lg font-semibold text-gray-700"><strong>Order ID:<br></strong> {{ $orderId }}</p>
         <p class="text-lg font-semibold text-gray-700"><strong>Payer Identity:</strong> {{ auth()->user()->email }}</p>
         <p class="text-lg font-semibold text-gray-700"><strong>Payer Name:</strong> {{ auth()->user()->name }}</p>

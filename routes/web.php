@@ -23,10 +23,10 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
-
-Route::get('/subscribe', [SubscribeController::class, 'index']);
-Route::get('/purchase', [SubscribeController::class, 'purchase']);
-
+Route::middleware(['auth'])->group(function () {
+    Route::get('/subscribe', [SubscribeController::class, 'index']);
+    Route::get('/purchase', [SubscribeController::class, 'purchase']);
+});
 
 Route::get('/chat', [MessageController::class, 'index'])
     ->middleware(['auth', 'update.last.activity', 'check.user.limit'])

@@ -6,7 +6,6 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Payment;
 use App\Enums\PaymentStatus;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -88,5 +87,51 @@ class PaymentTest extends TestCase
             'track_id' => 'testTrackId123',
             'status' => PaymentStatus::SUCCESS_CONFIRMED->value,
         ]);
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'unlimited_message' => true,
+        ]);
+        
+
+    }
+    public function test_failed_payment_method()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        Payment::factory()->create([
+            'track_id' => 'testTrackId123',
+            'order_id' => 'order123',
+            'amount' => 1000,
+            'payer_name' => $user->name,
+            'payer_identity' => $user->email,
+            'status' => PaymentStatus::PENDING->value,
+            'user_id' => $user->id,
+        ]);
+        session(['order_id' => 'order123']);
+        Http::fake([
+            'https://gateway.zibal.ir/v1/verify' => Http::response([
+                'result' => 202,
+                'status' => PaymentStatus::INTERNAL_ERROR->value,
+            ], 200),
+        ]);
+        $response = $this->post('/payment/verify', [
+            'success' => 0,
+            'trackId' => 'testTrackId123',
+            'status' => PaymentStatus::INTERNAL_ERROR->value
+        ]);
+
+        $response->assertRedirect('/dashboard');
+
+        $this->assertDatabaseHas('payments', [
+            'track_id' => 'testTrackId123',
+            'status' => PaymentStatus::INTERNAL_ERROR->value,
+        ]);
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'unlimited_message' => false,
+        ]);
+        
+
     }
 }
