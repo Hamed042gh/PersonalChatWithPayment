@@ -13,7 +13,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class PaymentTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
-
+    // 1. Test sending a payment request to a real service (Sandbox)
     public function test_payment_with_real_service_sandbox()
     {
 
@@ -53,7 +53,7 @@ class PaymentTest extends TestCase
         ]);
     }
 
-
+    // 2. Test payment verification method
     public function test_verify_payment_method()
     {
         $user = User::factory()->create();
@@ -69,12 +69,14 @@ class PaymentTest extends TestCase
             'user_id' => $user->id,
         ]);
         session(['order_id' => 'order123']);
+
         Http::fake([
             'https://gateway.zibal.ir/v1/verify' => Http::response([
                 'result' => 100,
                 'status' => PaymentStatus::SUCCESS_CONFIRMED->value,
             ], 200),
         ]);
+
         $response = $this->post('/payment/verify', [
             'success' => 1,
             'trackId' => 'testTrackId123',
@@ -91,9 +93,9 @@ class PaymentTest extends TestCase
             'id' => $user->id,
             'unlimited_message' => true,
         ]);
-        
-
     }
+
+    // 3. Test failed payment method
     public function test_failed_payment_method()
     {
         $user = User::factory()->create();
@@ -131,7 +133,5 @@ class PaymentTest extends TestCase
             'id' => $user->id,
             'unlimited_message' => false,
         ]);
-        
-
     }
 }

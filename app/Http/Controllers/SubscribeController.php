@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class SubscribeController extends Controller
 {
     public function index()
     {
-        return view('subscribe.index');
+        return Cache::remember('subscribe', 600, function () {
+
+            return view('subscribe.index')->render();
+        });
     }
 
     public function purchase()

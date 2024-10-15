@@ -69,6 +69,7 @@ class PersonalChat extends Component
         $this->validateMessage();
         if ($this->checkMessageLimit()) {
 
+
             try {
                 $message = $this->createMessage();
                 $this->broadcastMessage($message);
